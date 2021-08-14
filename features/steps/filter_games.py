@@ -1,7 +1,8 @@
+from typing import List
 from behave import *
 from src.Game import *
 from src.Catalogue import *
-
+import json
 #Condiciones antes de empezar cualquier STEP
 def before_scenario(context, scenario):
 	context = {}
@@ -23,11 +24,33 @@ def step_impl(context):
 def step_impl(context, name):
 	context.name = name
 
+@given('the user enters the rate: {rates}')
+def step_impl(context, rates):
+	list=[]
+	for rate in rates:
+		list.append(rate)
+	context.rates=list
+
+@given('the user enters the developer: {developer}')
+def step_impl(context, developer):
+	context.developer = developer
+
 
 @when("the user search games by {criteria}")
 def step_impl(context, criteria):
 	if(criteria == 'name'):
 		result, message = get_game_name(context.games, context.name)
+		print(result)
+		context.result = result
+		context.message = message
+	if(criteria == 'rate'):
+		result, message, error = get_game_rating(context.games, context.rates)
+		print(result)
+		print(error)
+		context.result = result
+		context.message = message
+	if(criteria == 'developer'):
+		result, message = get_game_developer(context.games, context.developer)
 		print(result)
 		context.result = result
 		context.message = message
